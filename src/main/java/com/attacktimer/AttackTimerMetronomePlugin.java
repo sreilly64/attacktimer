@@ -226,7 +226,10 @@ public class AttackTimerMetronomePlugin extends Plugin
     @Subscribe
     public void onConfigChanged(ConfigChanged event)
     {
-        attackDelayHoldoffTicks = 0;
+        if (event.getGroup().equals("attacktimermetronome"))
+        {
+            attackDelayHoldoffTicks = 0;
+        }
     }
 
     @Override
