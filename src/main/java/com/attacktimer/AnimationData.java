@@ -116,6 +116,7 @@ public enum AnimationData
     RANGED_BALLISTA(7218, AttackStyle.RANGED), // Tested w/ dragon javelins.
     RANGED_DRAGON_THROWNAXE_SPEC(7521, AttackStyle.RANGED, true),
     RANGED_RUNE_CROSSBOW(7552, AttackStyle.RANGED),
+    RANGED_RUNE_CROSSBOW_OR(9206, AttackStyle.RANGED),
     RANGED_BALLISTA_2(7555, AttackStyle.RANGED), // tested w/ light & heavy ballista, dragon & iron javelins.
     RANGED_RUNE_KNIFE(7617, AttackStyle.RANGED), // 1 tick animation, has 1 tick delay between attacks. Also d thrownaxe
     RANGED_DRAGON_KNIFE(8194, AttackStyle.RANGED),
@@ -135,7 +136,8 @@ public enum AnimationData
     MAGIC_ANCIENT_SINGLE_TARGET(1978, AttackStyle.MAGIC, 26), // Rush & Blitz animations (tested all 8, different weapons)
     MAGIC_ANCIENT_MULTI_TARGET(1979, AttackStyle.MAGIC, 30), // Burst & Barrage animations (tested all 8, different weapons)
     MAGIC_VOLATILE_NIGHTMARE_STAFF_SPEC(8532, AttackStyle.MAGIC, 66), // assume 99 mage's base damage (does not rise when boosted).
-    MAGIC_TUMEKENS_SHADOW(9493, AttackStyle.MAGIC);
+    MAGIC_TUMEKENS_SHADOW(9493, AttackStyle.MAGIC),
+    MAGIC_WARPED_SCEPTRE(10501, AttackStyle.MAGIC);
 
     private static final Map<Integer, AnimationData> DATA;
 
