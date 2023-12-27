@@ -99,11 +99,62 @@ public class AttackTimerMetronomePlugin extends Plugin
         return AttackStyle.ACCURATE;
     }
 
+    private int applyRangedAndMeleeRelicSpeed(int baseSpeed)
+    {
+        if (baseSpeed >= 4) {
+            return baseSpeed / 2;
+        } else {
+            return (baseSpeed + 1) / 2;
+        }
+    }
+
+
+    private int adjustSpeedForLeaguesIfApplicable(int baseSpeed)
+    {
+        int leagueRelicVarbit = 0;
+        if (client.getWorldType().contains(WorldType.SEASONAL)) {
+            leagueRelicVarbit = client.getVarbitValue(Varbits.LEAGUE_RELIC_4);
+        }
+
+        AttackStyle attackStyle = getAttackStyle();
+
+        switch (leagueRelicVarbit) {
+            case 0:
+                // No league relic active - player does not have t4 relic or is not in leagues.
+                return baseSpeed;
+            case 1:
+                // Archer's Embrace (ranged).
+                if (attackStyle == AttackStyle.RANGING ||
+                        attackStyle == AttackStyle.LONGRANGE) {
+                    return applyRangedAndMeleeRelicSpeed(baseSpeed);
+                }
+                break;
+            case 2:
+                // Brawler's Resolve (melee)
+                if (attackStyle == AttackStyle.ACCURATE ||
+                        attackStyle == AttackStyle.AGGRESSIVE ||
+                        attackStyle == AttackStyle.CONTROLLED ||
+                        attackStyle == AttackStyle.DEFENSIVE) {
+                    return applyRangedAndMeleeRelicSpeed(baseSpeed);
+                }
+                break;
+            case 3:
+                // Superior Sorcerer (magic)
+                if (attackStyle == AttackStyle.CASTING ||
+                        attackStyle == AttackStyle.DEFENSIVE_CASTING) {
+                    return 2;
+                }
+                break;
+        }
+
+        return baseSpeed;
+    }
+
     private int getWeaponSpeed()
     {
         ItemStats weaponStats = getWeaponStats();
         if (weaponStats == null) {
-            return 4; // Assume barehanded == 4t
+            return adjustSpeedForLeaguesIfApplicable(4); // Assume barehanded == 4t
         }
 
         ItemEquipmentStats e = weaponStats.getEquipment();
@@ -114,7 +165,7 @@ public class AttackTimerMetronomePlugin extends Plugin
             speed -= 1; // Assume ranging == rapid.
         }
 
-        return speed; // Deadline for next available attack.
+        return adjustSpeedForLeaguesIfApplicable(speed); // Deadline for next available attack.
     }
 
     private boolean isPlayerAttacking()
@@ -198,6 +249,8 @@ public class AttackTimerMetronomePlugin extends Plugin
     public void onGameTick(GameTick tick)
     {
         boolean isAttacking = isPlayerAttacking(); // Heuristic for attacking based on animation.
+
+
 
         switch (attackState) {
             case NOT_ATTACKING:
