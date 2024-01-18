@@ -77,6 +77,9 @@ public class AttackTimerMetronomePlugin extends Plugin
 
     private ItemStats getItemStatsFromContainer(ItemContainer container, int slotID)
     {
+        if (container == null) {
+            return null;
+        }
         final Item item = container.getItem(slotID);
         return item != null ? itemManager.getItemStats(item.getId(), false) : null;
     }
@@ -249,8 +252,6 @@ public class AttackTimerMetronomePlugin extends Plugin
     public void onGameTick(GameTick tick)
     {
         boolean isAttacking = isPlayerAttacking(); // Heuristic for attacking based on animation.
-
-
 
         switch (attackState) {
             case NOT_ATTACKING:
