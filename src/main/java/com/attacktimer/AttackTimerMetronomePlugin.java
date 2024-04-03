@@ -75,6 +75,15 @@ public class AttackTimerMetronomePlugin extends Plugin
         return configManager.getConfig(AttackTimerMetronomeConfig.class);
     }
 
+    private int getItemIdFromContainer(ItemContainer container, int slotID)
+    {
+        if (container == null) {
+            return -1;
+        }
+        final Item item = container.getItem(slotID);
+        return (item != null) ? item.getId() : -1;
+    }
+
     private ItemStats getItemStatsFromContainer(ItemContainer container, int slotID)
     {
         if (container == null) {
@@ -86,6 +95,11 @@ public class AttackTimerMetronomePlugin extends Plugin
     private ItemStats getWeaponStats()
     {
         return getItemStatsFromContainer(client.getItemContainer(InventoryID.EQUIPMENT),
+                EquipmentInventorySlot.WEAPON.getSlotIdx());
+    }
+
+    private int getWeaponId() {
+        return getItemIdFromContainer(client.getItemContainer(InventoryID.EQUIPMENT),
                 EquipmentInventorySlot.WEAPON.getSlotIdx());
     }
 
@@ -155,13 +169,24 @@ public class AttackTimerMetronomePlugin extends Plugin
 
     private int getWeaponSpeed()
     {
+        boolean isPlayerCasting = isPlayerCasting();
+        int itemId = getWeaponId();
+        if (isPlayerCasting && itemId != 11907 && itemId != 12899) {
+            // Unfortunately, the trident and toxic trident share animations with wave-tier spells.
+            //
+            // Assume that if the user is not wielding a trident and isCasting, they are autocasting
+            // or manual casting from a spellbook.
+            //
+            // This assumption breaks if the user is manually casting a spell while wielding a trident
+            // or toxic trident (unlikely).
+            return adjustSpeedForLeaguesIfApplicable(5);
+        }
+
         ItemStats weaponStats = getWeaponStats();
         if (weaponStats == null) {
             return adjustSpeedForLeaguesIfApplicable(4); // Assume barehanded == 4t
         }
-
         ItemEquipmentStats e = weaponStats.getEquipment();
-
         int speed = e.getAspeed();
         if (getAttackStyle() == AttackStyle.RANGING &&
             client.getVarpValue(VarPlayer.ATTACK_STYLE) == 1) { // Hack for index 1 => rapid
@@ -173,7 +198,12 @@ public class AttackTimerMetronomePlugin extends Plugin
 
     private boolean isPlayerAttacking()
     {
-        return AnimationData.fromId(client.getLocalPlayer().getAnimation()) != null;
+        int id = client.getLocalPlayer().getAnimation();
+        return AnimationData.fromId(id) != null;
+    }
+
+    private boolean isPlayerCasting() {
+        return AnimationData.isCasting(AnimationData.fromId(client.getLocalPlayer().getAnimation()));
     }
 
     private void performAttack()
