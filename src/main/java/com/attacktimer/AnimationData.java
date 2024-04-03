@@ -28,6 +28,7 @@ package com.attacktimer;
 
 import com.google.common.collect.ImmutableMap;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -105,6 +106,7 @@ public enum AnimationData
     MELEE_CRYSTAL_HALBERD_SPEC(1203, AttackStyle.SLASH, true),
     MELEE_SOULREAPER_AXE(10172, AttackStyle.SLASH, true),
     MELEE_SOULREAPER_AXE_SPEC(10173, AttackStyle.SLASH, true),
+    MELEE_BONE_MACE(2062, AttackStyle.CRUSH),
 
 
     // RANGED
@@ -114,7 +116,8 @@ public enum AnimationData
     RANGED_MAGIC_SHORTBOW_SPEC(1074, AttackStyle.RANGED, true),
     RANGED_CROSSBOW_PVP(4230, AttackStyle.RANGED), // Tested RCB & ACB w/ dragonstone bolts (e) & diamond bolts (e)
     RANGED_BLOWPIPE(5061, AttackStyle.RANGED), // tested in PvP with all styles. Has 1 tick delay between animations in pvp.
-    RANGED_DARTS(6600, AttackStyle.RANGED), // tested w/ addy darts. Seems to be constant animation but sometimes stalls and doesn't animate
+    RANGED_BLAZING_BLOWPIPE(10656, AttackStyle.RANGED),
+    RANGED_DARTS(7554, AttackStyle.RANGED), // tested w/ addy darts. Seems to be constant animation but sometimes stalls and doesn't animate
     RANGED_BALLISTA(7218, AttackStyle.RANGED), // Tested w/ dragon javelins.
     RANGED_DRAGON_THROWNAXE_SPEC(7521, AttackStyle.RANGED, true),
     RANGED_RUNE_CROSSBOW(7552, AttackStyle.RANGED),
@@ -126,6 +129,7 @@ public enum AnimationData
     RANGED_DRAGON_KNIFE_SPEC(8292, AttackStyle.RANGED, true),
     RANGED_ZARYTE_CROSSBOW(9168, AttackStyle.RANGED),
     RANGED_ZARYTE_CROSSBOW_PVP(9166, AttackStyle.RANGED),
+    RANGED_VENATOR_BOW(9858, AttackStyle.RANGED),
 
     // MAGIC - uses highest base damage available when animations are re-used. No damage = 0 damage.
     // for example, strike/bolt/blast animation will be fire blast base damage, multi target ancient spells will be ice barrage.
@@ -133,7 +137,7 @@ public enum AnimationData
     MAGIC_STANDARD_STRIKE_BOLT_BLAST(711, AttackStyle.MAGIC, 16), // tested w/ bolt
     MAGIC_STANDARD_BIND_STAFF(1161, AttackStyle.MAGIC), // tested w/ bind, snare, entangle, various staves
     MAGIC_STANDARD_STRIKE_BOLT_BLAST_STAFF(1162, AttackStyle.MAGIC, 16), // strike, bolt and blast (tested all spells, different weapons)
-    MAGIC_STANDARD_WAVE_STAFF(1167, AttackStyle.MAGIC, 20), // tested many staves
+    MAGIC_STANDARD_WAVE_STAFF(1167, AttackStyle.MAGIC, 20), // tested many staves, powered staves use this ID
     MAGIC_STANDARD_SURGE_STAFF(7855, AttackStyle.MAGIC, 24), // tested many staves
     MAGIC_ANCIENT_SINGLE_TARGET(1978, AttackStyle.MAGIC, 26), // Rush & Blitz animations (tested all 8, different weapons)
     MAGIC_ANCIENT_MULTI_TARGET(1979, AttackStyle.MAGIC, 30), // Burst & Barrage animations (tested all 8, different weapons)
@@ -202,6 +206,24 @@ public enum AnimationData
     public static AnimationData fromId(int animationId)
     {
         return DATA.get(animationId);
+    }
+
+    public static boolean isOffensiveMagic(int animationId) {
+        AnimationData animationData = fromId(animationId);
+        return (animationData == MAGIC_ANCIENT_SINGLE_TARGET ||
+                animationData == MAGIC_ANCIENT_MULTI_TARGET ||
+                animationData == MAGIC_STANDARD_BIND ||
+                animationData == MAGIC_STANDARD_BIND_STAFF ||
+                animationData == MAGIC_STANDARD_STRIKE_BOLT_BLAST ||
+                animationData == MAGIC_STANDARD_STRIKE_BOLT_BLAST_STAFF ||
+                animationData == MAGIC_STANDARD_WAVE_STAFF ||
+                animationData == MAGIC_STANDARD_SURGE_STAFF);
+    }
+
+    public static boolean isAncientMagicks(int animationId) {
+        AnimationData animationData = fromId(animationId);
+        return (animationData == MAGIC_ANCIENT_SINGLE_TARGET ||
+                animationData == MAGIC_ANCIENT_MULTI_TARGET);
     }
 
     public static boolean isStandardSpellbookSpell(AnimationData animationData)

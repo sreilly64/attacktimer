@@ -1,6 +1,7 @@
 package com.attacktimer;
 
 import com.google.inject.Provides;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
 import net.runelite.client.config.ConfigManager;
@@ -16,6 +17,7 @@ import net.runelite.http.api.item.ItemStats;
 
 import java.awt.*;
 
+@Slf4j
 @PluginDescriptor(
         name = "Attack Timer Metronome",
         description = "Shows a visual cue on an overlay every game tick to help timing based activities",
@@ -69,6 +71,8 @@ public class AttackTimerMetronomePlugin extends Plugin
     private final int KARAMBWAN_ATTACK_DELAY_TICKS = 2;
     public Dimension DEFAULT_SIZE = new Dimension(DEFAULT_SIZE_UNIT_PX, DEFAULT_SIZE_UNIT_PX);
 
+    private int ancientMagickAttackSpeed = 5;
+
     @Provides
     AttackTimerMetronomeConfig provideConfig(ConfigManager configManager)
     {
@@ -83,10 +87,10 @@ public class AttackTimerMetronomePlugin extends Plugin
         final Item item = container.getItem(slotID);
         return item != null ? itemManager.getItemStats(item.getId(), false) : null;
     }
+
     private ItemStats getWeaponStats()
     {
-        return getItemStatsFromContainer(client.getItemContainer(InventoryID.EQUIPMENT),
-                EquipmentInventorySlot.WEAPON.getSlotIdx());
+        return getItemStatsFromContainer(client.getItemContainer(InventoryID.EQUIPMENT), EquipmentInventorySlot.WEAPON.getSlotIdx());
     }
 
     private AttackStyle getAttackStyle()
@@ -161,8 +165,19 @@ public class AttackTimerMetronomePlugin extends Plugin
         }
 
         ItemEquipmentStats e = weaponStats.getEquipment();
+        Item equippedWeapon = client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
+        ItemComposition equippedWeaponItemComposition = client.getItemDefinition(equippedWeapon.getId());
+        String weaponName = equippedWeaponItemComposition.getName();
+        log.info("Weapon name: {}", weaponName);
+        int speed;
+        if (AnimationData.isAncientMagicks(client.getLocalPlayer().getAnimation())) {
+            log.info("isAncientMagicks returned TRUE with animation ID {}", client.getLocalPlayer().getAnimation());
+            speed = ancientMagickAttackSpeed;
+        } else {
+            log.info("isAncientMagicks returned FALSE with animation ID {}", client.getLocalPlayer().getAnimation());
+            speed = e.getAspeed();
+        }
 
-        int speed = e.getAspeed();
         if (getAttackStyle() == AttackStyle.RANGING &&
             client.getVarpValue(VarPlayer.ATTACK_STYLE) == 1) { // Hack for index 1 => rapid
             speed -= 1; // Assume ranging == rapid.
@@ -251,6 +266,10 @@ public class AttackTimerMetronomePlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick tick)
     {
+        Integer animationID = client.getLocalPlayer().getAnimation();
+        if (animationID != -1) {
+            log.info("Player animation ID = {}", animationID);
+        }
         boolean isAttacking = isPlayerAttacking(); // Heuristic for attacking based on animation.
 
         switch (attackState) {
