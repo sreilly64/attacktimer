@@ -70,7 +70,7 @@ enum WeaponType
     TYPE_27(ACCURATE, null, null, OTHER),
     TYPE_28(ACCURATE, ACCURATE, LONGRANGE),
     TYPE_29(ACCURATE, AGGRESSIVE, AGGRESSIVE, DEFENSIVE),
-    TYPE_30(ACCURATE, AGGRESSIVE, AGGRESSIVE, DEFENSIVE);
+    TYPE_30(ACCURATE, AGGRESSIVE, AGGRESSIVE, DEFENSIVE); // Keris weirdness - even though its the same as 29.
 
     @Getter
     private final AttackStyle[] attackStyles;
