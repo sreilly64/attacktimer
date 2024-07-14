@@ -316,8 +316,10 @@ public class AttackTimerMetronomePlugin extends Plugin
             // matches the stave rather than a manual spell, but this is good enough for now.
             return adjustSpeedForLeaguesIfApplicable(4);
         }
+
         if (matchesSpellbook && isManualCasting(curAnimation))
-        { // You can cast with anything equipped in which case we shouldn't look to invent for speed, it will instead always be 5.
+        {
+            // You can cast with anything equipped in which case we shouldn't look to invent for speed, it will instead always be 5.
             return adjustSpeedForLeaguesIfApplicable(5);
         }
 

@@ -222,7 +222,9 @@ public enum AnimationData
     TAKING_HIT_STAFF(415, AttackStyle.NON_ATTACK),
     TAKING_HIT_UNARMED(424, AttackStyle.NON_ATTACK),
     TAKING_HIT_VERACS_FLAIL(2063, AttackStyle.NON_ATTACK),
-    TAKING_HIT_WHIP(1659, AttackStyle.NON_ATTACK);
+    TAKING_HIT_WHIP(1659, AttackStyle.NON_ATTACK),
+    LOW_ALCH(712, AttackStyle.NON_ATTACK),
+    HIGH_ALCH(713, AttackStyle.NON_ATTACK);
 
     private static final Map<Integer, AnimationData> DATA;
     private static final Map<Spellbook, Set<AnimationData>> spellBookAnimations;
