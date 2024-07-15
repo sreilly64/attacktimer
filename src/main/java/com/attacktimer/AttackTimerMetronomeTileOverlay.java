@@ -1,5 +1,31 @@
 package com.attacktimer;
 
+/*
+ * Copyright (c) 2022, Nick Graves <https://github.com/ngraves95>
+ * Copyright (c) 2024, Lexer747 <https://github.com/Lexer747>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
@@ -16,9 +42,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Font;
-import java.util.Vector;
 
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPriority;
 
@@ -45,7 +69,8 @@ public class AttackTimerMetronomeTileOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (plugin.attackState != AttackTimerMetronomePlugin.AttackState.DELAYED) {
+        plugin.renderedState = plugin.attackState;
+        if (plugin.attackState == AttackTimerMetronomePlugin.AttackState.NOT_ATTACKING) {
             return null;
         }
 
@@ -79,10 +104,12 @@ public class AttackTimerMetronomeTileOverlay extends Overlay
             //(xt,yt)=(((1−t)*x0 + t*x1),((1−t)*y0 + t*y1)) ; Equation to find a point in the direction of (overlayRelativeX, overlayRelativeY) with specified distance from character model
             Double displayX = ((1-t) * playerX) + (t * overlayRelativeX);
             Double displayY = ((1-t) * playerY) + (t * overlayRelativeY);
-            LocalPoint displayLocalPoint = new LocalPoint((int) Math.round(displayX), (int) Math.round(displayY));
-
+            final LocalPoint displayLocalPoint = new LocalPoint((int) Math.round(displayX), (int) Math.round(displayY));
+//            final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
             final int height = client.getLocalPlayer().getLogicalHeight()+20; //TODO make this a configuration
-            final Point playerPoint = Perspective.localToCanvas(client, displayLocalPoint, client.getPlane(), height);
+            final Point playerPoint = Perspective.localToCanvas(client, displayLocalPoint, client.getTopLevelWorldView().getPlane(), height);
+            //final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getTopLevelWorldView().getPlane(), height);
+
             // Countdown ticks instead of up.
             // plugin.tickCounter => ticksRemaining
             int ticksRemaining = plugin.getTicksUntilNextAttack();
