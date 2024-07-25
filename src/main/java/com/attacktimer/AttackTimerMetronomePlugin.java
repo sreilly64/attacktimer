@@ -29,8 +29,6 @@ package com.attacktimer;
 
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
-import net.runelite.api.events.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Arrays;
@@ -63,8 +61,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.http.api.item.ItemEquipmentStats;
 import net.runelite.http.api.item.ItemStats;
-
-import java.awt.*;
 
 @Slf4j
 @PluginDescriptor(
