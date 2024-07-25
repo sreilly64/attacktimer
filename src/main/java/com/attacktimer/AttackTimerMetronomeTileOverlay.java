@@ -85,35 +85,15 @@ public class AttackTimerMetronomeTileOverlay extends Overlay
                 graphics.setFont(new Font(config.fontType().toString(), Font.PLAIN, config.fontSize()));
             }
 
-            Integer cameraX = client.getCameraX();
-            Integer cameraY = client.getCameraY();
-            Integer playerX = client.getLocalPlayer().getLocalLocation().getX();
-            Integer playerY = client.getLocalPlayer().getLocalLocation().getY();
-
-            //90 degree counterclockwise rotation matrix equations, finds the point to the right of character model relative to the camera POV
-            Integer overlayRelativeX = (playerX + playerY) - cameraY;
-            Integer overlayRelativeY = cameraX + (playerY - playerX);
-
-            // d=√((x2 – x1)² + (y2 – y1)²) ; Equation to find distance from camera (or above point) to the character model
-            Integer horizontalDistanceFromPlayerToOverlay = 50; //TODO make this a configuration
-            Double distanceToCamera = Math.sqrt(Math.pow((playerX - cameraX), 2) + Math.pow((playerY - cameraY), 2));
-
-            //ratio that will be applied to below equation in order to determine X and Y position of the overlay so that it is always a fixed distance from the character model
-            Double t = horizontalDistanceFromPlayerToOverlay / distanceToCamera;
-
-            //(xt,yt)=(((1−t)*x0 + t*x1),((1−t)*y0 + t*y1)) ; Equation to find a point in the direction of (overlayRelativeX, overlayRelativeY) with specified distance from character model
-            Double displayX = ((1-t) * playerX) + (t * overlayRelativeX);
-            Double displayY = ((1-t) * playerY) + (t * overlayRelativeY);
-            final LocalPoint displayLocalPoint = new LocalPoint((int) Math.round(displayX), (int) Math.round(displayY));
-//            final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
-            final int height = client.getLocalPlayer().getLogicalHeight()+20; //TODO make this a configuration
-            final Point playerPoint = Perspective.localToCanvas(client, displayLocalPoint, client.getTopLevelWorldView().getPlane(), height);
-            //final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getTopLevelWorldView().getPlane(), height);
+            final int height = client.getLocalPlayer().getLogicalHeight()+20;
+            final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
+            final Point playerPoint = Perspective.localToCanvas(client, localLocation, client.getTopLevelWorldView().getPlane(), height);
 
             // Countdown ticks instead of up.
             // plugin.tickCounter => ticksRemaining
             int ticksRemaining = plugin.getTicksUntilNextAttack();
-            OverlayUtil.renderTextLocation(graphics, playerPoint, String.valueOf(ticksRemaining), config.NumberColor());
+            Point displayPoint = new Point(playerPoint.getX() + 25, playerPoint.getY()); //TODO add offset as config
+            OverlayUtil.renderTextLocation(graphics, displayPoint, String.valueOf(ticksRemaining), config.NumberColor());
         }
 
         return null;

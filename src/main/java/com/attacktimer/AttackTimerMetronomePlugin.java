@@ -334,10 +334,10 @@ public class AttackTimerMetronomePlugin extends Plugin
         }
         ItemEquipmentStats e = weaponStats.getEquipment();
         //logging weapon name
-        Item equippedWeapon = client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
-        ItemComposition equippedWeaponItemComposition = client.getItemDefinition(equippedWeapon.getId());
-        String weaponName = equippedWeaponItemComposition.getName();
-        log.info("Weapon name: {}", weaponName);
+//        Item equippedWeapon = client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
+//        ItemComposition equippedWeaponItemComposition = client.getItemDefinition(equippedWeapon.getId());
+//        String weaponName = equippedWeaponItemComposition.getName();
+//        log.info("Weapon name: {}", weaponName);
 
         int speed = e.getAspeed();
 
@@ -363,6 +363,9 @@ public class AttackTimerMetronomePlugin extends Plugin
     private boolean isPlayerAttacking()
     {
         int animationId = client.getLocalPlayer().getAnimation();
+        if (animationId != -1) {
+            log.info("animationId = {}", animationId);
+        }
         if (AnimationData.isBlockListAnimation(animationId))
         {
             return false;
@@ -495,7 +498,7 @@ public class AttackTimerMetronomePlugin extends Plugin
     {
         Integer animationID = client.getLocalPlayer().getAnimation();
         if (animationID != -1) {
-            log.info("Player animation ID = {}", animationID);
+//            log.info("Player animation ID = {}", animationID);
         }
         boolean isAttacking = isPlayerAttacking();
         switch (attackState) {

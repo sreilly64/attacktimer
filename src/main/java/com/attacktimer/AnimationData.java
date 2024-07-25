@@ -112,9 +112,9 @@ public enum AnimationData
     MELEE_GHAZI_RAPIER_STAB(8145, AttackStyle.STAB), // rapier slash is 390, basic slash animation. Also VLS stab.
     MELEE_ANCIENT_GODSWORD_SPEC(9171, AttackStyle.SLASH, true),
     MELEE_CRYSTAL_HALBERD_SPEC(1203, AttackStyle.SLASH, true),
-    MELEE_SOULREAPER_AXE(10172, AttackStyle.SLASH, true),
+    MELEE_SOULREAPER_AXE_CRUSH(10171, AttackStyle.CRUSH, false),
+    MELEE_SOULREAPER_AXE_SLASH(10172, AttackStyle.SLASH, false),
     MELEE_SOULREAPER_AXE_SPEC(10173, AttackStyle.SLASH, true),
-    MELEE_BONE_MACE(2062, AttackStyle.CRUSH),
     MELEE_GUTHANS_LUNGE(2080, AttackStyle.STAB),
     MELEE_GUTHANS_SWIPE(2081, AttackStyle.STAB),
     MELEE_GUTHANS_POUNDMA(2082, AttackStyle.CRUSH),
