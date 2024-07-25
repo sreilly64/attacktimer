@@ -29,7 +29,6 @@ package com.attacktimer;
 
 import com.google.common.collect.ImmutableMap;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -166,6 +165,7 @@ public enum AnimationData
     RANGED_TONALZTICS_SPEC(10914, AttackStyle.RANGED, true),
     RANGED_WEBWEAVER_SPEC(9964, AttackStyle.RANGED, true), // https://oldschool.runescape.wiki/w/Webweaver_bow#Charged
     RANGED_BONE_CROSSBOW_SPEC(7557, AttackStyle.RANGED, true), // https://oldschool.runescape.wiki/w/Dorgeshuun_crossbow
+
     // MAGIC - Keep in spellbook order (staves last) then alphabetical order and oneline
     MAGIC_GOD_SPELL(811, AttackStyle.MAGIC, Spellbook.STANDARD), // https://oldschool.runescape.wiki/w/God_spells
     MAGIC_IBAN_BLAST(708, AttackStyle.MAGIC, Spellbook.STANDARD),
