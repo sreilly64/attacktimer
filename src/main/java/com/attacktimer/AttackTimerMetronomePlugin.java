@@ -4,6 +4,7 @@ package com.attacktimer;
 /*
  * Copyright (c) 2022, Nick Graves <https://github.com/ngraves95>
  * Copyright (c) 2024, Lexer747 <https://github.com/Lexer747>
+ * Copyright (c) 2024, Richardant <https://github.com/Richardant>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@ import com.google.inject.Provides;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import net.runelite.api.Actor;
 import net.runelite.api.ChatMessageType;
@@ -199,7 +201,7 @@ public class AttackTimerMetronomePlugin extends Plugin
 
     private ItemStats getWeaponStats(int weaponId)
     {
-        return itemManager.getItemStats(weaponId, false);
+        return itemManager.getItemStats(weaponId);
     }
 
     private AttackStyle getAttackStyle()
@@ -347,7 +349,7 @@ public class AttackTimerMetronomePlugin extends Plugin
         return adjustSpeedForLeaguesIfApplicable(speed); // Deadline for next available attack.
     }
 
-    private static final int TARGET_DUMMY_ID = 10507;
+    private static final List<Integer> SPECIAL_NPCS = Arrays.asList(10507, 9435, 9438, 9441, 9444); // Combat Dummy + Nightmare Pillars
 
     private boolean isPlayerAttacking()
     {
@@ -370,7 +372,7 @@ public class AttackTimerMetronomePlugin extends Plugin
             boolean containsAttackOption = Arrays.stream(npc.getComposition().getActions()).anyMatch("Attack"::equals);
             Integer health = npcManager.getHealth(npc.getId());
             boolean hasHealthAndLevel = health != null && health > 0 && target.getCombatLevel() > 0;
-            boolean attackingNPC = hasHealthAndLevel || npc.getId() == TARGET_DUMMY_ID || containsAttackOption;
+            boolean attackingNPC = hasHealthAndLevel || SPECIAL_NPCS.contains(npc.getId()) || containsAttackOption;
             // just having a target is not enough the player may be out of range, we must wait for any
             // animation which isn't running/walking/etc
             return attackingNPC && notWalking;

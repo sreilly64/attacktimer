@@ -9,6 +9,7 @@ public enum FontTypes
 {
     REGULAR("RS Regular"),
     ARIAL("Arial"),
+    BOLD("Bold"),
     CAMBRIA("Cambria"),
     ROCKWELL("Rockwell"),
     SEGOE_UI("Segoe Ui"),
