@@ -131,6 +131,19 @@ public interface AttackTimerMetronomeConfig extends Config
 		return 0;
 	}
 
+	@ConfigItem(
+			position = 9,
+			keyName = "tickHorizontalOffset",
+			name = "Horizontal Offset",
+			description = "Horizontal offset for minor adjustments of the tick number",
+			section = TickNumberSettings
+	)
+	@Range(min = -50, max = 50)
+	default int horizontalTickOffset()
+	{
+		return 0;
+	}
+
 	@ConfigSection(
 			name = "Attack Bar",
 			description = "Change the colors and number of colors to cycle through",

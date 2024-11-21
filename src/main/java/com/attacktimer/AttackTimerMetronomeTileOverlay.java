@@ -116,7 +116,7 @@ public class AttackTimerMetronomeTileOverlay extends Overlay
                     break;
             }
             if (playerPoint != null) {
-                Point displayPoint = new Point(playerPoint.getX() + 25, playerPoint.getY()); //TODO add offset as config
+                Point displayPoint = new Point(playerPoint.getX() + config.horizontalTickOffset(), playerPoint.getY());
                 OverlayUtil.renderTextLocation(graphics, displayPoint, String.valueOf(ticksRemaining), ticksRemaining == 1 ? config.LastColor() : config.NumberColor());
             }
         }
