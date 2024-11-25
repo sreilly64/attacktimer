@@ -80,7 +80,7 @@ class AttackTimerBarOverlay extends Overlay
             return null;
         }
 
-        final int height = client.getLocalPlayer().getLogicalHeight() + config.heightOffset() - 20;
+        final int height = client.getLocalPlayer().getLogicalHeight() + config.heightOffset() + 5;
         final LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
         final Point canvasPoint = Perspective.localToCanvas(client, localLocation, client.getTopLevelWorldView().getPlane(), height);
 
@@ -107,7 +107,7 @@ class AttackTimerBarOverlay extends Overlay
         }
         // Draw bar
         final int barX = canvasPoint.getX() - 15;
-        final int barY = canvasPoint.getY();
+        final int barY = canvasPoint.getY() + 7;
         final int barWidth = ATTACK_BAR_SIZE.width;
         final int barHeight = ATTACK_BAR_SIZE.height;
 
