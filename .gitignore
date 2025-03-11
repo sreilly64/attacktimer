@@ -9,3 +9,5 @@ nbactions.xml
 nb-configuration.xml
 nbproject/
 out
+# Gradle's default binary path when you build the plugin
+bin/*
