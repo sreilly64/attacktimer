@@ -29,11 +29,13 @@ package com.attacktimer;
  */
 
 import com.attacktimer.VariableSpeed.VariableSpeed;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import net.runelite.api.Actor;
 import net.runelite.api.ChatMessageType;
@@ -118,6 +120,13 @@ public class AttackTimerMetronomePlugin extends Plugin
     public int DEFAULT_SIZE_UNIT_PX = 25;
 
     public static final int SALAMANDER_SET_ANIM_ID = 952; // Used by all 4 types of salamander https://oldschool.runescape.wiki/w/Salamander
+
+    private static final int TWINFLAME_STAFF_WEAPON_ID = 30634;
+
+    private static final Map<Integer, Integer> NON_STANDARD_MAGIC_WEAPON_SPEEDS =
+            new ImmutableMap.Builder<Integer, Integer>()
+                    .put(TWINFLAME_STAFF_WEAPON_ID, 6)
+                    .build();
 
     private final int DEFAULT_FOOD_ATTACK_DELAY_TICKS = 3;
     private final int KARAMBWAN_ATTACK_DELAY_TICKS = 2;
@@ -232,6 +241,11 @@ public class AttackTimerMetronomePlugin extends Plugin
         return false;
     }
 
+    private int getMagicBaseSpeed(int weaponId)
+    {
+        return NON_STANDARD_MAGIC_WEAPON_SPEEDS.getOrDefault(weaponId, 5);
+    }
+
     private int getWeaponSpeed(int weaponId, PoweredStaves stave, AnimationData curAnimation, boolean matchesSpellbook)
     {
         if (stave != null && stave.getAnimations().contains(curAnimation))
@@ -241,11 +255,13 @@ public class AttackTimerMetronomePlugin extends Plugin
             // matches the stave rather than a manual spell, but this is good enough for now.
             return VariableSpeed.computeSpeed(client, curAnimation, AttackProcedure.POWERED_STAVE, 4);
         }
+
         if (matchesSpellbook && isManualCasting(curAnimation))
         {
-            // You can cast with anything equipped in which case we shouldn't look to invent for speed, it will instead always be 5.
-            return VariableSpeed.computeSpeed(client, curAnimation, AttackProcedure.MANUAL_AUTO_CAST, 5);
+            // You can cast with anything equipped in which case we shouldn't look to invent for speed.
+            return VariableSpeed.computeSpeed(client, curAnimation, AttackProcedure.MANUAL_AUTO_CAST, getMagicBaseSpeed(weaponId));
         }
+
         ItemStats weaponStats = getWeaponStats(weaponId);
         if (weaponStats == null) {
             return VariableSpeed.computeSpeed(client, curAnimation, AttackProcedure.MELEE_OR_RANGE, 4); // Assume barehanded == 4t
