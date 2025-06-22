@@ -137,6 +137,7 @@ public class AttackTimerMetronomePlugin extends Plugin
     private int soundEffectId = -1;
     public Dimension DEFAULT_SIZE = new Dimension(DEFAULT_SIZE_UNIT_PX, DEFAULT_SIZE_UNIT_PX);
 
+    private int pendingEatDelayTicks = 0;
 
     // region subscribers
 
@@ -363,8 +364,8 @@ public class AttackTimerMetronomePlugin extends Plugin
                     KARAMBWAN_ATTACK_DELAY_TICKS :
                     DEFAULT_FOOD_ATTACK_DELAY_TICKS;
 
-            if (attackState == AttackState.DELAYED) {
-                attackDelayHoldoffTicks += attackDelay;
+            if (isAttackCooldownPending()) {
+                pendingEatDelayTicks += attackDelay;
             }
         }
     }
@@ -395,6 +396,14 @@ public class AttackTimerMetronomePlugin extends Plugin
                     break;
             }
         }
+
+        applyAndClearEats();
+    }
+
+    private void applyAndClearEats() {
+        int pendingEats = pendingEatDelayTicks;
+        attackDelayHoldoffTicks += pendingEats;
+        pendingEatDelayTicks -= pendingEats;
     }
 
     @Subscribe
@@ -423,6 +432,8 @@ public class AttackTimerMetronomePlugin extends Plugin
                     }
                 }
         }
+
+        applyAndClearEats();
 
         attackDelayHoldoffTicks--;
     }
