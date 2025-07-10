@@ -122,10 +122,19 @@ public class AttackTimerMetronomePlugin extends Plugin
     public static final int SALAMANDER_SET_ANIM_ID = 952; // Used by all 4 types of salamander https://oldschool.runescape.wiki/w/Salamander
 
     private static final int TWINFLAME_STAFF_WEAPON_ID = 30634;
+    private static final int ECHO_VENATOR_BOW_WEAPON_ID = 30434;
+    private static final int VENATOR_BOW_WEAPON_ID = 27610;
 
     private static final Map<Integer, Integer> NON_STANDARD_MAGIC_WEAPON_SPEEDS =
             new ImmutableMap.Builder<Integer, Integer>()
                     .put(TWINFLAME_STAFF_WEAPON_ID, 6)
+                    .build();
+
+    // Map of problematic itemIds to equivalent working ones.
+    // The Echo Venator Bow's ItemStats are returning null, so use the regular bow instead.
+    private static final Map<Integer, Integer> WEAPON_ID_MAPPING_WORKAROUNDS =
+            new ImmutableMap.Builder<Integer, Integer>()
+                    .put(ECHO_VENATOR_BOW_WEAPON_ID, VENATOR_BOW_WEAPON_ID)
                     .build();
 
     private final int DEFAULT_FOOD_ATTACK_DELAY_TICKS = 3;
@@ -137,6 +146,7 @@ public class AttackTimerMetronomePlugin extends Plugin
     private int soundEffectId = -1;
     public Dimension DEFAULT_SIZE = new Dimension(DEFAULT_SIZE_UNIT_PX, DEFAULT_SIZE_UNIT_PX);
 
+    private int pendingEatDelayTicks = 0;
 
     // region subscribers
 
@@ -202,8 +212,12 @@ public class AttackTimerMetronomePlugin extends Plugin
     }
 
     private int getWeaponId() {
-        return getItemIdFromContainer(client.getItemContainer(InventoryID.EQUIPMENT),
-                EquipmentInventorySlot.WEAPON.getSlotIdx());
+        int weaponId = getItemIdFromContainer(
+                client.getItemContainer(InventoryID.EQUIPMENT),
+                EquipmentInventorySlot.WEAPON.getSlotIdx()
+        );
+
+        return WEAPON_ID_MAPPING_WORKAROUNDS.getOrDefault(weaponId, weaponId);
     }
 
     private ItemStats getWeaponStats(int weaponId)
@@ -363,8 +377,8 @@ public class AttackTimerMetronomePlugin extends Plugin
                     KARAMBWAN_ATTACK_DELAY_TICKS :
                     DEFAULT_FOOD_ATTACK_DELAY_TICKS;
 
-            if (attackState == AttackState.DELAYED) {
-                attackDelayHoldoffTicks += attackDelay;
+            if (isAttackCooldownPending()) {
+                pendingEatDelayTicks += attackDelay;
             }
         }
     }
@@ -395,6 +409,14 @@ public class AttackTimerMetronomePlugin extends Plugin
                     break;
             }
         }
+
+        applyAndClearEats();
+    }
+
+    private void applyAndClearEats() {
+        int pendingEats = pendingEatDelayTicks;
+        attackDelayHoldoffTicks += pendingEats;
+        pendingEatDelayTicks -= pendingEats;
     }
 
     @Subscribe
@@ -423,6 +445,8 @@ public class AttackTimerMetronomePlugin extends Plugin
                     }
                 }
         }
+
+        applyAndClearEats();
 
         attackDelayHoldoffTicks--;
     }
